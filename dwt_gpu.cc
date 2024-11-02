@@ -3,8 +3,8 @@
 #include <iostream>
 #include <fstream>
 
-#define CL_TARGET_OPENCL_VERSION 220
-#include <CL/cl.hpp>
+#define CL_HPP_TARGET_OPENCL_VERSION 220
+#include <CL/opencl.hpp>
 
 int init_cl(cl::Device &selected_device, cl::Context &context, cl::CommandQueue &queue) {
   cl_int err {};

@@ -6,8 +6,8 @@
 #include <vector>
 #include <cmath>
 
-#define CL_TARGET_OPENCL_VERSION 220
-#include <CL/cl.hpp>
+#define CL_HPP_TARGET_OPENCL_VERSION 220
+#include <CL/opencl.hpp>
 
 int dwt_53_gpu(const char *input, const char *output, bool inverse) {
   cl_int err {};
@@ -63,7 +63,7 @@ int dwt_53_gpu(const char *input, const char *output, bool inverse) {
 
   cl::NDRange local(16, 16);
 
-  cl::size_t<3> region {};
+  cl::array<size_t, 3> region {};
   region[0] = width;
   region[1] = height;
   region[2] = 1;
