@@ -1,0 +1,15 @@
+{
+	"version": 8,
+	"configurePresets": [
+		{
+			"name": "default",
+			"displayName": "Default Config",
+			"description": "Default build using Ninja Multi-Config generator",
+			"binaryDir": "build",
+			"generator": "Ninja Multi-Config",
+			"cacheVariables": {
+				"CMAKE_COLOR_DIAGNOSTICS": "ON"
+			}
+		}
+	]
+}
