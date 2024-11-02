@@ -72,28 +72,22 @@ int init_cl(cl::Device &selected_device, cl::Context &context, cl::CommandQueue 
 }
 
 int compile_program(cl::Device &selected_device, cl::Context &context, const char *source_name, cl::Program &program) {
-  cl_int err {};
-
-  std::string source {};
-  cl::Program::Sources sources {};
-  {
-    std::ifstream source_file(source_name);
-    if (!source_file) {
-      std::cerr << source_name << " opening failed" << "\n";
-      return EXIT_FAILURE;
-    }
-
-    source.assign(std::istreambuf_iterator<char>(source_file), std::istreambuf_iterator<char>());
-    sources.emplace_back(source.data(), 0);
+  std::ifstream source_file(source_name);
+  if (!source_file) {
+    std::cerr << source_name << " opening failed" << "\n";
+    return EXIT_FAILURE;
   }
 
+  cl::Program::Sources sources {{std::istreambuf_iterator<char>(source_file), std::istreambuf_iterator<char>()}};
+
+  cl_int err {};
   program = cl::Program(context, sources, &err);
   if (err != CL_SUCCESS) {
     std::cerr << "Program creation failed" << "\n";
     return EXIT_FAILURE;
   }
 
-  if (program.build(std::vector<cl::Device>(1, selected_device), "", nullptr, nullptr) == CL_BUILD_PROGRAM_FAILURE) {
+  if (program.build(std::vector<cl::Device>(1, selected_device)) != CL_SUCCESS) {
     std::cerr << "Build log:\n" << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(selected_device, &err).c_str();
     if (err != CL_SUCCESS) {
       std::cerr << "getBuildInfo failed" << "\n";
