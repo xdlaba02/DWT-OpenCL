@@ -78,8 +78,6 @@ __kernel void fwt_53_2d_ll(read_only image2d_t input, write_only image2d_t outpu
     center_center += shift_right_and_round(center_left + center_right, 2) + shift_right_and_round(top_center + bottom_center, 2);
     bottom_center += shift_right_and_round(bottom_left + bottom_right, 2);
 
-#if 1
-
     int half_width  = (width  + 1) >> 1;
     int half_height = (height + 1) >> 1;
 
@@ -96,24 +94,6 @@ __kernel void fwt_53_2d_ll(read_only image2d_t input, write_only image2d_t outpu
     if (x_in && y_in) {
       write_imagei(output, (int2)(gx + half_width, gy + half_height), (int4)(bottom_right));
     }
-
-#else
-
-    write_imagei(output, (int2)(x, y), (int4)(center_center));
-
-    if (x_in) {
-      write_imagei(output, (int2)(x + 1, y), (int4)(center_right));
-    }
-
-    if (y_in) {
-      write_imagei(output, (int2)(x, y + 1), (int4)(bottom_center));
-    }
-
-    if (x_in && y_in) {
-      write_imagei(output, (int2)(x + 1, y + 1), (int4)(bottom_right));
-    }
-
-#endif
   }
 }
 
@@ -130,8 +110,6 @@ __kernel void iwt_53_2d_ll(read_only image2d_t input, write_only image2d_t outpu
     bool x_in = x + 1 < width;
     bool y_in = y + 1 < height;
 
-#if 1
-
     int half_width  = (width  + 1) >> 1;
     int half_height = (height + 1) >> 1;
 
@@ -146,20 +124,6 @@ __kernel void iwt_53_2d_ll(read_only image2d_t input, write_only image2d_t outpu
     int top_center    = !gy   ? 0 : read_imagei(input, sampler, (int2)(gx,                  gy + half_height - 1)).x;
     int center_right  = !x_in ? 0 : read_imagei(input, sampler, (int2)(gx + half_width,     gy)).x;
     int bottom_center = !y_in ? 0 : read_imagei(input, sampler, (int2)(gx,                  gy + half_height)).x;
-
-#else
-
-    int center_center = read_imagei(input, sampler, (int2)(x,     y)).x;
-    int top_left      = read_imagei(input, sampler, (int2)(x - 1, y - 1)).x;
-    int top_center    = read_imagei(input, sampler, (int2)(x,     y - 1)).x;
-    int center_left   = read_imagei(input, sampler, (int2)(x - 1, y)).x;
-    int top_right     = !x_in ? 0 : read_imagei(input, sampler, (int2)(x + 1, y - 1)).x;
-    int center_right  = !x_in ? 0 : read_imagei(input, sampler, (int2)(x + 1, y)).x;
-    int bottom_left   = !y_in ? 0 : read_imagei(input, sampler, (int2)(x - 1, y + 1)).x;
-    int bottom_center = !y_in ? 0 : read_imagei(input, sampler, (int2)(x,     y + 1)).x;
-    int bottom_right  = !x_in || !y_in ? 0 : read_imagei(input, sampler, (int2)(x + 1, y + 1)).x;
-
-#endif
 
     top_center    -= shift_right_and_round(top_left + top_right, 2);
     bottom_center -= shift_right_and_round(bottom_left + bottom_right, 2);
